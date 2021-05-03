@@ -20,12 +20,12 @@ public class VendorController {
     }
 
     @GetMapping(BASE_URI)
-    Flux<Vendor> list() {
+    public Flux<Vendor> list() {
         return vendorRepository.findAll();
     }
 
     @GetMapping(BASE_URI + "/{id}")
-    Mono<Vendor> getById(@PathVariable String id) {
+    public Mono<Vendor> getById(@PathVariable String id) {
         return vendorRepository.findById(id);
     }
 }
