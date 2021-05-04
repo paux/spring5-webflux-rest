@@ -5,11 +5,13 @@ import cc.paukner.spring5webfluxrest.repositories.VendorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.reactivestreams.Publisher;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static cc.paukner.spring5webfluxrest.controllers.VendorController.BASE_URI;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 class VendorControllerTest {
@@ -48,5 +50,20 @@ class VendorControllerTest {
         webTestClient.get().uri(BASE_URI + "/" + id)
                 .exchange()
                 .expectBodyList(Vendor.class);
+    }
+
+    @Test
+    void create() {
+        given(vendorRepository.saveAll(any(Publisher.class)))
+                .willReturn(Flux.just(Vendor.builder().build()));
+
+        Mono<Vendor> vendorToCreateMono = Mono.just(Vendor.builder().firstName("Hugo").lastName("Portisch").build());
+
+        webTestClient.post()
+                .uri(BASE_URI)
+                .body(vendorToCreateMono, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
     }
 }
