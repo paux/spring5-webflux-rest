@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,5 +39,11 @@ public class VendorController {
     @PostMapping(BASE_URI)
     public Mono<Void> create(@RequestBody Publisher<Vendor> vendorSteam) {
         return vendorRepository.saveAll(vendorSteam).then();
+    }
+
+    @PutMapping(BASE_URI + "/{id}")
+    public Mono<Vendor> update(@PathVariable String id, @RequestBody Vendor vendor) {
+        vendor.setId(id); // Why? Why not just expect the ID already set? - Because path!
+        return vendorRepository.save(vendor);
     }
 }
